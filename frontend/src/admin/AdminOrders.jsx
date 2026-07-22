@@ -70,7 +70,7 @@ const AdminOrders = () => {
 
                 <td>{order._id.substring(0, 8)}...</td>
 
-                <td>{order.userId?.name || "Deleted User"}</td>
+                <td>{order.user?.name || "Deleted User"}</td>
 
                 <td>₹{order.totalAmount.toFixed(2)}</td>
 
