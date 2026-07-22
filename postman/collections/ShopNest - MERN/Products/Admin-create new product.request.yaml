@@ -1,0 +1,50 @@
+$kind: http-request
+name: Admin-->create new product
+description: |-
+  Generated from cURL: curl -X POST "http://localhost:5000/api/products" \
+    -H "Authorization: Bearer YOUR_ADMIN_TOKEN" \
+    -F "name=Test Product" \
+    -F "description=This is a test product" \
+    -F "price=199" \
+    -F "category=electronics" \
+    -F "stock=10" \
+    -F "image=@C:/path/to/your-image.jpg"
+url: http://localhost:5000/api/products/
+method: POST
+headers:
+  Authorization: Bearer YOUR_ADMIN_TOKEN
+body:
+  type: formdata
+  content:
+    - type: text
+      key: name
+      value: Test Product
+      disabled: false
+    - type: text
+      key: description
+      value: This is a test product
+      disabled: false
+    - type: text
+      key: price
+      value: "199"
+      disabled: false
+    - type: text
+      key: category
+      value: electronics
+      disabled: false
+    - type: text
+      key: stock
+      value: "10"
+      disabled: false
+    - type: file
+      key: image
+      src:
+        - /C:/Users/Devendra kushwaha/OneDrive/Pictures/Screenshots/Screenshot
+          2026-04-13 113004.png
+      description: ""
+      disabled: false
+auth:
+  type: bearer
+  credentials:
+    token: Beer YOUR_ADMIN_TOKEN
+order: 4424674374526892

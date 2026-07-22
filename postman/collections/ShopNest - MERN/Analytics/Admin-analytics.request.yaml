@@ -1,0 +1,61 @@
+$kind: http-request
+name: Admin--analytics
+description: |-
+  Generated from cURL: curl -X POST "http://localhost:5000/api/orders" \
+    -H "Authorization: Bearer YOUR_ADMIN_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "items": [
+        {
+          "productId": "PRODUCT_ID_1",
+          "quantity": 2,
+          "price": 199
+        },
+        {
+          "productId": "PRODUCT_ID_2",
+          "quantity": 1,
+          "price": 299
+        }
+      ],
+      "totalAmount": 697,
+      "address": {
+        "fullName": "John Doe",
+        "street": "123 Main Street",
+        "city": "New York",
+        "postalCode": "10001",
+        "country": "USA"
+      },
+      "paymentId": "payment_12345"
+    }'
+url: http://localhost:5000/api/orders
+method: POST
+headers:
+  Authorization: Bearer YOUR_ADMIN_TOKEN
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+        "items": [
+          {
+            "productId": "PRODUCT_ID_1",
+            "quantity": 2,
+            "price": 199
+          },
+          {
+            "productId": "PRODUCT_ID_2",
+            "quantity": 1,
+            "price": 299
+          }
+        ],
+        "totalAmount": 697,
+        "address": {
+          "fullName": "John Doe",
+          "street": "123 Main Street",
+          "city": "New York",
+          "postalCode": "10001",
+          "country": "USA"
+        },
+        "paymentId": "payment_12345"
+      }
+order: 1784299255128

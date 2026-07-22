@@ -1,0 +1,69 @@
+.product-card {
+    width: 260px;
+    background: #18181b;
+    border: 1px solid #2d2d2d;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    /* border-color: #f97316; */
+}
+
+.product-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.05);
+}
+
+.product-info {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    /* Remaining height le lega */
+}
+
+.product-name {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    min-height: 48px;
+    /* Sab cards me same height */
+}
+
+.product-price {
+    color: #22c55e;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.product-details-button {
+    margin-top: auto;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    background: #f97316 !important;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.product-details-button:hover  {
+    background: #ec5503 !important;
+    transform: scale(1.03);
+}

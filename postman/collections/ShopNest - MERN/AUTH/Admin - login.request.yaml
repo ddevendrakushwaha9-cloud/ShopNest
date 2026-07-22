@@ -1,0 +1,14 @@
+$kind: http-request
+name: Admin -- login
+url: "{{endpoint}}/api/auth/loginUser"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"email\": \"user2@gmail.com\",\r
+
+    \    \"password\": \"*****\"\r
+
+    }"
+order: 1784213838955
