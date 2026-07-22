@@ -106,6 +106,10 @@ postman/ShopNest.postman_collection.json
 
 Import this file into Postman to test APIs.
 
+## Admin detail
+- email - admin@gmail.com
+- password - Devendra@6267
+
 ## 🔮 Future Improvements
 
 - Product Reviews and Ratings
