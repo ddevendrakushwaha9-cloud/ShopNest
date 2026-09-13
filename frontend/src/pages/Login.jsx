@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {AuthContext} from '../context/AuthContext';
 import '../styles/auth.css';
 import { toast } from "react-toastify";
@@ -9,6 +9,13 @@ const Login = () =>{
     const [password, setPassword] = useState('');
     const {login} = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    React.useEffect(() => {
+        if (location.state?.email) {
+            setEmail(location.state.email);
+        }
+    }, [location.state]);
 
     const handleSubmit = async(e) => {
     e.preventDefault();
@@ -22,15 +29,13 @@ const Login = () =>{
             });
             const data = await res.json();
             if (!res.ok && data.message === "Please verify your email first") {
-            navigate("/emailverify");
+            navigate("/emailverify", { state: { email } });
             return;
             }
             if(res.ok){
                 login(data);
                 toast.success("Welcome back!");
-                setTimeout(() => {
-                    navigate("/");
-                }, 1000);
+                navigate("/");
             }else{
                 toast.warning(data.message);
             }

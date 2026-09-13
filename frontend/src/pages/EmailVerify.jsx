@@ -28,7 +28,7 @@ const EmailVerify = () => {
 
             if (res.ok) {
                 toast.success("Email verified successfully!");
-                navigate("/login");
+                navigate("/login", { state: { email } });
             } else {
                 toast.error(data.message);
             }
