@@ -1,27 +1,29 @@
-const nodemailer = require('nodemailer');
-
-const sendEmail = async ({ email, subject, message }) => {
-  try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS, // App Password mapping
-      },
-    });
-
-    const mailOptions = {
-      from: `"ShopNest Support" <${process.env.GMAIL_USER}>`,
-      to: email,
-      subject: subject,
-      html: message,
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log(`Email successfully sent to ${email}`);
-  } catch (error) {
-    console.error(`Failed to send email to ${email}: ${error.message}`);
+const sendEmail = async (to, subject, text) => {
+  if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) {
+    throw new Error('RESEND_API_KEY and EMAIL_FROM are required');
   }
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: process.env.EMAIL_FROM,
+      to: [to],
+      subject,
+      text,
+    }),
+  });
+
+  if (!response.ok) {
+    const details = await response.text();
+    throw new Error(`Resend API error ${response.status}: ${details}`);
+  }
+
+  console.log(`Email successfully sent to ${to}`);
+  return response.json();
 };
 
 module.exports = sendEmail;
