@@ -43,12 +43,11 @@ const registerUser = async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Email message
-        const message = `
-        Welcome to ShopNest, ${name}!
+        const message = `Welcome to ShopNest, ${name}!
 
-        Thank you for registering with us.
+    Thank you for registering with us.
 
-        Your OTP for registration is: ${otp}`;
+    Your OTP for registration is: ${otp}`;
 
         // Remove old OTP if exists
         await OTP.deleteMany({ email });
@@ -161,7 +160,11 @@ const resendOtp = async (req, res) => {
         await sendEmail(
             email,
             "Your New OTP",
-            `Your new OTP is ${otp}`
+            `Welcome to ShopNest, ${user.name}!
+
+Thank you for registering with us.
+
+Your OTP for registration is: ${otp}`
         );
 
         return res.json({
