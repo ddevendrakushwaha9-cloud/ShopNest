@@ -162,9 +162,9 @@ const resendOtp = async (req, res) => {
             "Your New OTP",
             `Welcome to ShopNest, ${user.name}!
 
-Thank you for registering with us.
+            Thank you for registering with us.
 
-Your OTP for registration is: ${otp}`
+            Your OTP for registration is: ${otp}`
         );
 
         return res.json({
