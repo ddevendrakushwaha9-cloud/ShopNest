@@ -21,7 +21,7 @@ const Register = () => {
             });
             const data = await res.json();
             if(res.ok){
-                toast.success('Registration successful. Please login to verify your email.');
+                toast.success('Registration successful. Please login.');
                 navigate('/login', { state: { email } });
             } else{
                 toast.warning(data.message);
@@ -42,7 +42,7 @@ const Register = () => {
                 <input type='email' placeholder='Email' value={email} onChange={(e)=>setEmail(e.target.value)} required/>
                 <input type='password' placeholder='Password' value={password} onChange={(e)=>setPassword(e.target.value)} required/>
                 <button type='submit' className='btn' disabled={loading}>
-                    {loading ? 'Sending OTP...' : 'Register'}
+                    {loading ? 'Registering...' : 'Register'}
                 </button>
                 <p>Already have an account? <Link to = '/login'>Login</Link></p>
             </form>
