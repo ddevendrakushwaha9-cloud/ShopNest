@@ -7,10 +7,12 @@ const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] =useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try{
             const res = await fetch('/api/auth/register', {
                 method: 'post',
@@ -27,6 +29,8 @@ const Register = () => {
         } catch(error){
             console.log(error);
             toast.error("Something went wrong.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -37,7 +41,9 @@ const Register = () => {
                 <input type='text' placeholder='Name' value={name} onChange={(e)=>setName(e.target.value)} required/>
                 <input type='email' placeholder='Email' value={email} onChange={(e)=>setEmail(e.target.value)} required/>
                 <input type='password' placeholder='Password' value={password} onChange={(e)=>setPassword(e.target.value)} required/>
-                <button type = 'submit' className = 'btn'>Register</button>
+                <button type='submit' className='btn' disabled={loading}>
+                    {loading ? 'Sending OTP...' : 'Register'}
+                </button>
                 <p>Already have an account? <Link to = '/login'>Login</Link></p>
             </form>
         </div>
