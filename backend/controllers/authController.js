@@ -73,10 +73,12 @@ const registerUser = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error);
+        console.error("Registration or OTP email failed:", error.code || error.message);
 
         return res.status(500).json({
-            message: "Server Error",
+            message: error.code === "EAUTH"
+                ? "OTP email login failed. Please check the Gmail App Password."
+                : "Unable to send OTP email. Please try again.",
         });
     }
 };
@@ -167,9 +169,12 @@ const resendOtp = async (req, res) => {
         });
 
     } catch (error) {
+        console.error("Resend OTP email failed:", error.code || error.message);
 
         return res.status(500).json({
-            message: "Server Error",
+            message: error.code === "EAUTH"
+                ? "OTP email login failed. Please check the Gmail App Password."
+                : "Unable to send OTP email. Please try again.",
         });
 
     }
