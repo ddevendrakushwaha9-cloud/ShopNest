@@ -1,6 +1,8 @@
 const User = require("../model/User");
+const OTP = require("../model/otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const sendEmail = require("../utils/sendEmail");
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -34,18 +36,97 @@ const registerUser = async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            verified: true,
+            verified: false,
+        });
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        await sendEmail({
+            email,
+            subject: "Welcome to ShopNest - Your OTP for Registration",
+            message: `Welcome to ShopNest, ${name}!\n\nYour OTP for registration is: ${otp}`,
+        });
+
+        await OTP.deleteMany({ email });
+        await OTP.create({
+            email,
+            otp,
+            expiresAt: new Date(Date.now() + 5 * 60 * 1000),
         });
 
         return res.status(201).json({
-            message: "Registration successful. You can now login."
+            message: "OTP sent successfully. Please verify your email."
         });
 
     } catch (error) {
         console.error("Registration failed:", error.code || error.message);
 
         return res.status(500).json({
-            message: "Unable to register user. Please try again.",
+            message: error.message || "Unable to send OTP email. Please try again.",
+        });
+    }
+};
+
+const otpVerify = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        const otpDoc = await OTP.findOne({ email });
+
+        if (!otpDoc) {
+            return res.status(400).json({ message: "OTP not found" });
+        }
+        if (otpDoc.expiresAt < Date.now()) {
+            await OTP.deleteOne({ email });
+            return res.status(400).json({ message: "OTP expired" });
+        }
+        if (otpDoc.otp !== otp) {
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        user.verified = true;
+        await user.save();
+        await OTP.deleteOne({ email });
+
+        return res.json({ message: "Email verified successfully" });
+    } catch (error) {
+        console.error("OTP verification failed:", error.message);
+        return res.status(500).json({ message: "Server Error" });
+    }
+};
+
+const resendOtp = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        await sendEmail({
+            email,
+            subject: "Your New OTP",
+            message: `Welcome to ShopNest, ${user.name}!\n\nYour OTP is: ${otp}`,
+        });
+
+        await OTP.deleteMany({ email });
+        await OTP.create({
+            email,
+            otp,
+            expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        });
+
+        return res.json({ message: "OTP sent successfully" });
+    } catch (error) {
+        console.error("OTP resend failed:", error.message);
+        return res.status(500).json({
+            message: error.message || "Unable to send OTP email. Please try again.",
         });
     }
 };
@@ -62,6 +143,10 @@ const loginUser = async (req, res) => {
         return res.status(400).json({
         message: "Invalid email or password",
             });
+        }
+
+        if (!user.verified) {
+            return res.status(401).json({ message: "Please verify your email first" });
         }
 
         if ((await bcrypt.compare(password, user.password))) {
@@ -115,5 +200,7 @@ const getUsers = async (req, res) => {
 module.exports = {
     registerUser,
     loginUser,
-    getUsers
+    getUsers,
+    otpVerify,
+    resendOtp,
 };

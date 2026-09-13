@@ -8,6 +8,7 @@ import ReturnPolicy from './pages/ReturnPolicy';
 import Disclaimer from './pages/Disclaimer';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import EmailVerify from './pages/EmailVerify';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Profile from './pages/Profile';
@@ -37,6 +38,7 @@ function App(){
         <Route path= '/checkout' element={<Checkout/>}/>
         <Route path = "/login" element={<Login/>}/>
         <Route path = "/register" element={<Register/>}/>
+        <Route path="/emailverify" element={<EmailVerify />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/ordersuccess" element={<OrderSuccess/>} />
         
