@@ -1,35 +1,27 @@
 const nodemailer = require('nodemailer');
 
-const sendEmail = async (to, subject, text) => {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        throw new Error('EMAIL_USER and EMAIL_PASS are required');
-    }
-
+const sendEmail = async ({ email, subject, message }) => {
+  try {
     const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        requireTLS: true,
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 15000,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS, // App Password mapping
+      },
     });
 
-    try {
-        return await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to,
-            subject,
-            text
-        });
-    } catch (error) {
-        console.error('Error sending email:', error.code || error.message);
-        throw error;
-    }
+    const mailOptions = {
+      from: `"ShopNest Support" <${process.env.GMAIL_USER}>`,
+      to: email,
+      subject: subject,
+      html: message,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Email successfully sent to ${email}`);
+  } catch (error) {
+    console.error(`Failed to send email to ${email}: ${error.message}`);
+  }
 };
 
 module.exports = sendEmail;
