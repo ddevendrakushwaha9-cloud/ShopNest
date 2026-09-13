@@ -10,6 +10,7 @@ const EmailVerify = () => {
 
     const [email, setEmail] = useState(location.state?.email || "");
     const [otp, setOtp] = useState("");
+    const [resending, setResending] = useState(false);
 
     // Verify OTP
     const handleSubmit = async (e) => {
@@ -45,6 +46,11 @@ const EmailVerify = () => {
             return;
         }
 
+        if (resending) {
+            return;
+        }
+
+        setResending(true);
         try {
             const res = await fetch("/api/auth/resendOtp", {
                 method: "POST",
@@ -64,6 +70,8 @@ const EmailVerify = () => {
         } catch (error) {
             console.log(error);
             toast.error("Something went wrong.");
+        } finally {
+            setResending(false);
         }
     };
 
@@ -94,8 +102,8 @@ const EmailVerify = () => {
 
                 <p style={{ marginTop: "15px" }}>
                     Didn't receive OTP?{" "}
-                    <button type="button" onClick={handleResendOTP}>
-                        Resend OTP
+                    <button type="button" onClick={handleResendOTP} disabled={resending}>
+                        {resending ? "Sending..." : "Resend OTP"}
                     </button>
                 </p>
             </form>
