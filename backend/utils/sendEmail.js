@@ -1,25 +1,28 @@
 const sendEmail = async (to, subject, text) => {
-  if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) {
-    throw new Error('RESEND_API_KEY and EMAIL_FROM are required');
+  if (!process.env.BREVO_API_KEY || !process.env.EMAIL_FROM) {
+    throw new Error('BREVO_API_KEY and EMAIL_FROM are required');
   }
 
-  const response = await fetch('https://api.resend.com/emails', {
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      'api-key': process.env.BREVO_API_KEY,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: process.env.EMAIL_FROM,
-      to: [to],
+      sender: {
+        name: process.env.EMAIL_FROM_NAME || 'ShopNest',
+        email: process.env.EMAIL_FROM,
+      },
+      to: [{ email: to }],
       subject,
-      text,
+      textContent: text,
     }),
   });
 
   if (!response.ok) {
     const details = await response.text();
-    throw new Error(`Resend API error ${response.status}: ${details}`);
+    throw new Error(`Brevo API error ${response.status}: ${details}`);
   }
 
   console.log(`Email successfully sent to ${to}`);
