@@ -1,32 +1,27 @@
-const sendEmail = async (to, subject, text) => {
-  if (!process.env.BREVO_API_KEY || !process.env.EMAIL_FROM) {
-    throw new Error('BREVO_API_KEY and EMAIL_FROM are required');
+const nodemailer = require('nodemailer');
+
+const sendEmail = async ({ email, subject, message }) => {
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_PASS) {
+    throw new Error('GMAIL_USER and GMAIL_PASS are required');
   }
 
-  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-    method: 'POST',
-    headers: {
-      'api-key': process.env.BREVO_API_KEY,
-      'Content-Type': 'application/json',
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASS,
     },
-    body: JSON.stringify({
-      sender: {
-        name: process.env.EMAIL_FROM_NAME || 'ShopNest',
-        email: process.env.EMAIL_FROM,
-      },
-      to: [{ email: to }],
-      subject,
-      textContent: text,
-    }),
   });
 
-  if (!response.ok) {
-    const details = await response.text();
-    throw new Error(`Brevo API error ${response.status}: ${details}`);
-  }
+  const result = await transporter.sendMail({
+    from: `"ShopNest Support" <${process.env.GMAIL_USER}>`,
+    to: email,
+    subject,
+    text: message,
+  });
 
-  console.log(`Email successfully sent to ${to}`);
-  return response.json();
+  console.log(`Email successfully sent to ${email}`);
+  return result;
 };
 
 module.exports = sendEmail;

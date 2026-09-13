@@ -23,7 +23,11 @@ const createOrder = async (req, res) =>{
             ${address.postalCode}
             ${address.country}\n\nWe will notify once your order is shipped.\n\nBest regard,\nShopNest Team`;
             await order.save();
-            await sendEmail(req.user.email, "Order Created", message);
+            await sendEmail({
+                email: req.user.email,
+                subject: "Order Created",
+                message,
+            });
             res.status(201).json({message: 'Order Created Successfully', order});
         }
     } catch(error){
