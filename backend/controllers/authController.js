@@ -49,22 +49,20 @@ const registerUser = async (req, res) => {
 
         Your OTP for registration is: ${otp}`;
 
-        // Remove old OTP if exists
-        await OTP.deleteMany({ email });
-
-        //otp store krna
-        await OTP.create({
-            email,
-            otp,
-            expiresAt: new Date(Date.now() + 5 * 60 * 1000) // 5 minutes
-        });
-
         // Send email
         await sendEmail(
             email,
             "Welcome to ShopNest - Your OTP for Registration",
             message
         );
+
+        // Store the OTP only after Brevo accepts the email.
+        await OTP.deleteMany({ email });
+        await OTP.create({
+            email,
+            otp,
+            expiresAt: new Date(Date.now() + 5 * 60 * 1000)
+        });
         
         // Send response
         return res.status(201).json({
@@ -75,9 +73,7 @@ const registerUser = async (req, res) => {
         console.error("Registration or OTP email failed:", error.code || error.message);
 
         return res.status(500).json({
-            message: error.code === "EAUTH"
-                ? "OTP email login failed. Please check the Gmail App Password."
-                : "Unable to send OTP email. Please try again.",
+            message: error.message || "Unable to send OTP email. Please try again.",
         });
     }
 };
@@ -143,18 +139,8 @@ const resendOtp = async (req, res) => {
             });
         }
 
-        // Delete old OTP
-        await OTP.deleteMany({ email });
-
         // Generate new OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-        // Save new OTP
-        await OTP.create({
-            email,
-            otp,
-            expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-        });
 
         // Send email
         await sendEmail(
@@ -167,6 +153,14 @@ const resendOtp = async (req, res) => {
             Your OTP for registration is: ${otp}`
         );
 
+        // Replace the old OTP only after Brevo accepts the email.
+        await OTP.deleteMany({ email });
+        await OTP.create({
+            email,
+            otp,
+            expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        });
+
         return res.json({
             message: "OTP sent successfully",
         });
@@ -175,9 +169,7 @@ const resendOtp = async (req, res) => {
         console.error("Resend OTP email failed:", error.code || error.message);
 
         return res.status(500).json({
-            message: error.code === "EAUTH"
-                ? "OTP email login failed. Please check the Gmail App Password."
-                : "Unable to send OTP email. Please try again.",
+            message: error.message || "Unable to send OTP email. Please try again.",
         });
 
     }
