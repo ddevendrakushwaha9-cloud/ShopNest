@@ -45,9 +45,9 @@ const registerUser = async (req, res) => {
         // Email message
         const message = `Welcome to ShopNest, ${name}!
 
-    Thank you for registering with us.
+        Thank you for registering with us.
 
-    Your OTP for registration is: ${otp}`;
+        Your OTP for registration is: ${otp}`;
 
         // Remove old OTP if exists
         await OTP.deleteMany({ email });
